@@ -23,6 +23,9 @@ ACharacterBase::ACharacterBase()
 void ACharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	Health = MaxHealth;
+	Stamina = MaxStamina;
 	
 }
 
@@ -74,4 +77,15 @@ void ACharacterBase::LookRightRate(float AxisValue)
 	// Using GetDeltaSeconds will make the Yaw (horizontal axis) input frame rate independent.
 	AddControllerYawInput(AxisValue * RotationRate * GetWorld()->GetDeltaSeconds());
 }
+
+float ACharacterBase::GetHealthPercent() const
+{
+	return Health / MaxHealth;
+}
+
+float ACharacterBase::GetStaminaPercent() const
+{
+	return Stamina / MaxStamina;
+}
+
 

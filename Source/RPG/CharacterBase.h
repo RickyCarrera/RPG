@@ -21,14 +21,20 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
+	/* Handles the forward and back movement  */
 	void MoveForward(float AxisValue);
-	
+	/* Handles the right and left movement */
 	void MoveRight(float AxisValue);
-
+	/* Handles the looking up and down using an analog controller */
 	void LookUpRate(float AxisValue);
-
+	/* Handles the looking right and left using an analog controller */
 	void LookRightRate(float AxisValue);
+	/* returns the change in health as a percent */
+	UFUNCTION(BlueprintPure)
+	float GetHealthPercent() const;
+	/* returns the change in stamina as a percent */
+	UFUNCTION(BlueprintPure)
+	float GetStaminaPercent() const;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -38,13 +44,23 @@ public:
 
 
 protected:
-
+	/* Root component for the follow camera */
 	UPROPERTY(EditDefaultsOnly, Category = "Components")
 	USpringArmComponent* SpringArm;
-
+	/* the camera that the player will view the game through */
 	UPROPERTY(EditDefaultsOnly, Category = "Components")
 	UCameraComponent* FollowCamera;
-
+	/* Adjustable rotation rate for analog controller for the character looking vertically and horizontally */
 	UPROPERTY(EditAnywhere)
 	float RotationRate = 10;
+	/* Default Character Max health adjustable */
+	UPROPERTY(EditAnywhere)
+	float MaxHealth = 100;
+	/* will be used to update the default (max) health when taking damage */
+	float Health;
+	/* Default Character Max Stamina adjustable*/
+	UPROPERTY(EditAnywhere)
+	float MaxStamina = 100;
+	/* will be used to update the default (max) stamina when performing actions */
+	float Stamina;
 };
