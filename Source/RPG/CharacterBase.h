@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "CharacterBase.generated.h"
 
+class AWeaponBase;
+class UAnimMontage;
 class USpringArmComponent;
 class UCameraComponent;
 
@@ -35,6 +37,11 @@ protected:
 	/* returns the change in stamina as a percent */
 	UFUNCTION(BlueprintPure)
 	float GetStaminaPercent() const;
+	/* Calls the attack function from weapon class and plays animation montage */
+	void Attack();
+	/* Will equipped the weapon we are overlapping with when mapped key is pressed */
+	void EquippedPressed();
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -42,6 +49,9 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	void SetEquippedWeapon(AWeaponBase* WeaponToSet);
+
+	FORCEINLINE void SetActiveOverlappingWeapon(AWeaponBase * WeaponBase) { ActiveOverlappingWeapon = WeaponBase; }
 
 protected:
 	/* Root component for the follow camera */
@@ -63,4 +73,15 @@ protected:
 	float MaxStamina = 100;
 	/* will be used to update the default (max) stamina when performing actions */
 	float Stamina;
+	/* Plays the attack montage */
+	UPROPERTY(EditAnywhere)
+	UAnimMontage* AttackMontage;
+	/* Reference to our Weapon */
+	UPROPERTY(BlueprintReadWrite)
+	AWeaponBase* Weapon;
+	/* The weapon we will overlap with in order to equipped it */
+	UPROPERTY(VisibleAnywhere, Category = "Weapon")
+	AWeaponBase * ActiveOverlappingWeapon;
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AWeaponBase> WeaponClass;
 };

@@ -4,6 +4,7 @@
 #include "CharacterBase.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "WeaponBase.h"
 
 // Sets default values
 ACharacterBase::ACharacterBase()
@@ -26,6 +27,12 @@ void ACharacterBase::BeginPlay()
 
 	Health = MaxHealth;
 	Stamina = MaxStamina;
+
+	// attachs to weapon to the socket when game starts.
+	Weapon = GetWorld()->SpawnActor<AWeaponBase>(WeaponClass);
+	Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("WeaponSocket"));
+	Weapon->SetOwner(this);
+	
 	
 }
 
@@ -52,9 +59,10 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 	// Action Binding
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
+	PlayerInputComponent->BindAction("Attack", IE_Pressed, this, &ACharacterBase::Attack);
+	PlayerInputComponent->BindAction("PickUp", IE_Pressed, this, &ACharacterBase::EquippedPressed);
 
 }
-
 
 void ACharacterBase::MoveForward(float AxisValue)
 {
@@ -86,6 +94,37 @@ float ACharacterBase::GetHealthPercent() const
 float ACharacterBase::GetStaminaPercent() const
 {
 	return Stamina / MaxStamina;
+}
+
+void ACharacterBase::SetEquippedWeapon(AWeaponBase * WeaponToSet)
+{
+	if (Weapon)
+	{
+		Weapon->Destroy(); // if a weapon is already equipped destroy it and replace with new weapon.
+	}
+	Weapon = WeaponToSet;
+}
+
+void ACharacterBase::Attack()
+{
+	if (Weapon)
+	{
+		PlayAnimMontage(AttackMontage);
+		Weapon->Attack();
+	}
+}
+
+void ACharacterBase::EquippedPressed()
+{
+	if (ActiveOverlappingWeapon)
+	{
+		AWeaponBase* weapon = Cast<AWeaponBase>(ActiveOverlappingWeapon);
+		if (weapon)
+		{
+			weapon->Equip(this);
+			SetActiveOverlappingWeapon(nullptr);
+		}
+	}
 }
 
 
