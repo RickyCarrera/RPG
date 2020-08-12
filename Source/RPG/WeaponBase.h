@@ -52,6 +52,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Collision")
 	USphereComponent* CollisionSphere;
 
+	/* Default damage amount, adjustable */
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	float Damage = 20.0f;
+
 private:
 
 	AController * GetOwningController() const;

@@ -3,6 +3,7 @@
 
 #include "CharacterBase.h"
 #include "Camera/CameraComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "WeaponBase.h"
 
@@ -18,6 +19,11 @@ ACharacterBase::ACharacterBase()
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("Follow Camera"));
 	FollowCamera->SetupAttachment(SpringArm);
 
+	bWasFirstAttackUsed = false;
+	bWasSecondAttackUsed = false;
+	bWasThirdAttackUsed = false;
+	bWasFourthAttackUsed = false;
+	bHasLandedHit = true;
 }
 
 // Called when the game starts or when spawned
@@ -61,6 +67,13 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Attack", IE_Pressed, this, &ACharacterBase::Attack);
 	PlayerInputComponent->BindAction("PickUp", IE_Pressed, this, &ACharacterBase::EquippedPressed);
+	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &ACharacterBase::Sprint);
+	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &ACharacterBase::Walk);
+
+	PlayerInputComponent->BindAction("Attack1", IE_Pressed, this, &ACharacterBase::StartAttack1);
+	PlayerInputComponent->BindAction("Attack2", IE_Pressed, this, &ACharacterBase::StartAttack2);
+	PlayerInputComponent->BindAction("Attack3", IE_Pressed, this, &ACharacterBase::StartAttack3);
+	PlayerInputComponent->BindAction("Attack4", IE_Pressed, this, &ACharacterBase::StartAttack4);
 
 }
 
@@ -85,6 +98,15 @@ void ACharacterBase::LookRightRate(float AxisValue)
 	// Using GetDeltaSeconds will make the Yaw (horizontal axis) input frame rate independent.
 	AddControllerYawInput(AxisValue * RotationRate * GetWorld()->GetDeltaSeconds());
 }
+void ACharacterBase::Sprint()
+{
+	GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
+}
+
+void ACharacterBase::Walk()
+{
+	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+}
 
 float ACharacterBase::GetHealthPercent() const
 {
@@ -105,6 +127,16 @@ void ACharacterBase::SetEquippedWeapon(AWeaponBase * WeaponToSet)
 	Weapon = WeaponToSet;
 }
 
+float ACharacterBase::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser)
+{
+	float DamageToApply = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	DamageToApply = FMath::Min(Health, DamageToApply); // prevents from taking damage more than amount of Health, no overkill.
+	Health -= DamageToApply;
+	//bHasLandedHit = true;
+	UE_LOG(LogTemp, Warning, TEXT("Health Left %f"), Health);
+	return DamageToApply;
+}
+
 void ACharacterBase::Attack()
 {
 	if (Weapon)
@@ -113,6 +145,28 @@ void ACharacterBase::Attack()
 		Weapon->Attack();
 	}
 }
+
+void ACharacterBase::StartAttack1()
+{
+	UE_LOG(LogTemp, Warning, TEXT("FIRST ATTACK"));
+	bWasFirstAttackUsed = true;
+}
+void ACharacterBase::StartAttack2()
+{
+	UE_LOG(LogTemp, Warning, TEXT("SECOND ATTACK"));
+	bWasSecondAttackUsed = true;
+}
+void ACharacterBase::StartAttack3()
+{
+	UE_LOG(LogTemp, Warning, TEXT("THIRD ATTACK"));
+	bWasThirdAttackUsed = true;
+}
+void ACharacterBase::StartAttack4()
+{
+	UE_LOG(LogTemp, Warning, TEXT("FOURTH ATTACK"));
+	bWasFourthAttackUsed = true;
+}
+
 
 void ACharacterBase::EquippedPressed()
 {
@@ -123,8 +177,10 @@ void ACharacterBase::EquippedPressed()
 		{
 			weapon->Equip(this);
 			SetActiveOverlappingWeapon(nullptr);
+			Weapon->SetOwner(this);
 		}
 	}
 }
+
 
 

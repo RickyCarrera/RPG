@@ -59,10 +59,21 @@ void AWeaponBase::Attack()
 	Params.AddIgnoredActor(GetOwner());
 
 	FHitResult HitResult;
+	FRotator Rotation = EndPoint.Rotation();
+	FVector HitDirection = Rotation.Vector();
 	bool HitSuccess = GetWorld()->LineTraceSingleByChannel(HitResult, StartPoint, EndPoint, ECC_Visibility, Params);
 	if (HitSuccess)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("This was hit %s"), *HitResult.GetActor()->GetName());
+		AActor* HitActor = HitResult.GetActor();
+		if (HitActor)
+		{
+			FPointDamageEvent DamageEvent(Damage, HitResult, HitDirection, nullptr);
+			AController * OwningController = GetOwningController();
+			HitActor->TakeDamage(Damage, DamageEvent, OwningController, this);
+			//UGameplayStatics::ApplyDamage(HitActor, Damage, OwningController, this, nullptr);
+			UE_LOG(LogTemp, Warning, TEXT("This was hit %s"), *HitResult.GetActor()->GetName());
+		}
+
 	}
 	DrawDebugLine(GetWorld(), StartPoint, EndPoint, FColor::Red, false, 1.0,0,2.0);
 }

@@ -41,6 +41,17 @@ protected:
 	void Attack();
 	/* Will equipped the weapon we are overlapping with when mapped key is pressed */
 	void EquippedPressed();
+	/* Handles sprint mechanics */
+	UFUNCTION()
+	void Sprint();
+	/* Handles walk mechanics */
+	UFUNCTION()
+	void Walk();
+
+	void StartAttack1();
+	void StartAttack2();
+	void StartAttack3();
+	void StartAttack4();
 
 public:	
 	// Called every frame
@@ -52,6 +63,8 @@ public:
 	void SetEquippedWeapon(AWeaponBase* WeaponToSet);
 
 	FORCEINLINE void SetActiveOverlappingWeapon(AWeaponBase * WeaponBase) { ActiveOverlappingWeapon = WeaponBase; }
+
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
 protected:
 	/* Root component for the follow camera */
@@ -73,6 +86,12 @@ protected:
 	float MaxStamina = 100;
 	/* will be used to update the default (max) stamina when performing actions */
 	float Stamina;
+	/* adjustable sprinting speed */
+	UPROPERTY(EditDefaultsOnly, Category = "Movement")
+	float SprintSpeed = 1000.f;
+	/* adjustable walking speed */
+	UPROPERTY(EditDefaultsOnly, Category = "Movement")
+	float WalkSpeed = 600.f;
 	/* Plays the attack montage */
 	UPROPERTY(EditAnywhere)
 	UAnimMontage* AttackMontage;
@@ -84,4 +103,19 @@ protected:
 	AWeaponBase * ActiveOverlappingWeapon;
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AWeaponBase> WeaponClass;
+	/* Has the player used the first attack */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attacks")
+	bool bWasFirstAttackUsed;
+	/* Has the player used the second attack */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attacks")
+	bool bWasSecondAttackUsed;
+	/* Has the player used the third attack*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attacks")
+	bool bWasThirdAttackUsed;
+	/* Has the player used the fourth attack*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attacks")
+	bool bWasFourthAttackUsed;
+	/* Has the player landed any attack */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attacks")
+	bool bHasLandedHit;
 };
