@@ -37,8 +37,6 @@ protected:
 	/* returns the change in stamina as a percent */
 	UFUNCTION(BlueprintPure)
 	float GetStaminaPercent() const;
-	/* Calls the attack function from weapon class and plays animation montage */
-	void Attack();
 	/* Will equipped the weapon we are overlapping with when mapped key is pressed */
 	void EquippedPressed();
 	/* Handles sprint mechanics */
@@ -48,6 +46,7 @@ protected:
 	UFUNCTION()
 	void Walk();
 
+	/* Combo system */
 	void StartAttack1();
 	void StartAttack2();
 	void StartAttack3();
@@ -115,7 +114,4 @@ protected:
 	/* Has the player used the fourth attack*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attacks")
 	bool bWasFourthAttackUsed;
-	/* Has the player landed any attack */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attacks")
-	bool bHasLandedHit;
 };

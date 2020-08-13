@@ -23,7 +23,6 @@ ACharacterBase::ACharacterBase()
 	bWasSecondAttackUsed = false;
 	bWasThirdAttackUsed = false;
 	bWasFourthAttackUsed = false;
-	bHasLandedHit = true;
 }
 
 // Called when the game starts or when spawned
@@ -132,39 +131,46 @@ float ACharacterBase::TakeDamage(float DamageAmount, FDamageEvent const & Damage
 	float DamageToApply = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	DamageToApply = FMath::Min(Health, DamageToApply); // prevents from taking damage more than amount of Health, no overkill.
 	Health -= DamageToApply;
-	//bHasLandedHit = true;
 	UE_LOG(LogTemp, Warning, TEXT("Health Left %f"), Health);
 	return DamageToApply;
 }
 
-void ACharacterBase::Attack()
+void ACharacterBase::StartAttack1()
 {
 	if (Weapon)
 	{
-		PlayAnimMontage(AttackMontage);
+		UE_LOG(LogTemp, Warning, TEXT("FIRST ATTACK"));
 		Weapon->Attack();
+		bWasFirstAttackUsed = true;
 	}
-}
-
-void ACharacterBase::StartAttack1()
-{
-	UE_LOG(LogTemp, Warning, TEXT("FIRST ATTACK"));
-	bWasFirstAttackUsed = true;
 }
 void ACharacterBase::StartAttack2()
 {
-	UE_LOG(LogTemp, Warning, TEXT("SECOND ATTACK"));
-	bWasSecondAttackUsed = true;
+	if (Weapon)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("SECOND ATTACK"));
+		Weapon->Attack();
+		bWasSecondAttackUsed = true;
+	}
+
 }
 void ACharacterBase::StartAttack3()
 {
-	UE_LOG(LogTemp, Warning, TEXT("THIRD ATTACK"));
-	bWasThirdAttackUsed = true;
+	if (Weapon)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("THIRD ATTACK"));
+		Weapon->Attack();
+		bWasThirdAttackUsed = true;
+	}
 }
 void ACharacterBase::StartAttack4()
 {
-	UE_LOG(LogTemp, Warning, TEXT("FOURTH ATTACK"));
-	bWasFourthAttackUsed = true;
+	if (Weapon)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("FOURTH ATTACK"));
+		Weapon->Attack();
+		bWasFourthAttackUsed = true;
+	}
 }
 
 

@@ -28,7 +28,10 @@ public:
 	/* Trigger events after the character is no longer overlapping with the weapon */
 	UFUNCTION()
 	virtual void OnOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
 	void Equip(ACharacterBase* Character);
+
+
 
 protected:
 	// Called when the game starts or when spawned

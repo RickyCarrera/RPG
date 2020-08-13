@@ -3,11 +3,13 @@
 
 #include "WeaponBase.h"
 #include "CharacterBase.h"
+#include "Components/BoxComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/SphereComponent.h"
 #include "DrawDebugHelpers.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 // Sets default values
 AWeaponBase::AWeaponBase()
@@ -23,6 +25,8 @@ AWeaponBase::AWeaponBase()
 
 	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Skeletal Mesh Component"));
 	WeaponMesh->SetupAttachment(RootComp);
+
+
 }
 
 // Called when the game starts or when spawned
@@ -40,42 +44,33 @@ void AWeaponBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	Attack();
-
 }
 
 void AWeaponBase::Attack()
 {
-	AController* OwningPawn = GetOwningController();
-	if (!OwningPawn)
+	AController* OwnerController = GetOwningController();
+	if (!OwnerController)
 	{
 		return;
 	}
 
-	FVector StartPoint = WeaponMesh->GetSocketLocation("BaseSocket");
-	FVector EndPoint = WeaponMesh->GetSocketLocation("TipSocket");
-
-	FCollisionQueryParams Params;
-	Params.AddIgnoredActor(this);
-	Params.AddIgnoredActor(GetOwner());
-
+	FVector StartLocation = WeaponMesh->GetSocketLocation("BaseSocket");
+	FVector EndLocation = WeaponMesh->GetSocketLocation("TipSocket");
 	FHitResult HitResult;
-	FRotator Rotation = EndPoint.Rotation();
-	FVector HitDirection = Rotation.Vector();
-	bool HitSuccess = GetWorld()->LineTraceSingleByChannel(HitResult, StartPoint, EndPoint, ECC_Visibility, Params);
-	if (HitSuccess)
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(this);
+	QueryParams.AddIgnoredActor(GetOwner());
+	bool TraceSuccess = GetWorld()->LineTraceSingleByChannel(HitResult, StartLocation, EndLocation, ECC_Visibility, QueryParams);
+	if (TraceSuccess)
 	{
 		AActor* HitActor = HitResult.GetActor();
 		if (HitActor)
 		{
-			FPointDamageEvent DamageEvent(Damage, HitResult, HitDirection, nullptr);
-			AController * OwningController = GetOwningController();
-			HitActor->TakeDamage(Damage, DamageEvent, OwningController, this);
-			//UGameplayStatics::ApplyDamage(HitActor, Damage, OwningController, this, nullptr);
-			UE_LOG(LogTemp, Warning, TEXT("This was hit %s"), *HitResult.GetActor()->GetName());
+			UGameplayStatics::ApplyDamage(HitActor, Damage, OwnerController, this, nullptr);
+			UE_LOG(LogTemp, Warning, TEXT("Something was hit!"));
 		}
-
+		DrawDebugSphere(GetWorld(), EndLocation, 10.f, 10, FColor::Red, false, -1.f, 1, 5.f);
 	}
-	DrawDebugLine(GetWorld(), StartPoint, EndPoint, FColor::Red, false, 1.0,0,2.0);
 }
 
 void AWeaponBase::OnOverlapBegin(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
@@ -101,6 +96,7 @@ void AWeaponBase::OnOverlapEnd(UPrimitiveComponent * OverlappedComponent, AActor
 		}
 	}
 }
+
 
 void AWeaponBase::Equip(ACharacterBase * Character)
 {
