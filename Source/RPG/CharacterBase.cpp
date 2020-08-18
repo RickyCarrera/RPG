@@ -64,7 +64,7 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 	// Action Binding
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
-	PlayerInputComponent->BindAction("Attack", IE_Pressed, this, &ACharacterBase::Attack);
+	//PlayerInputComponent->BindAction("Attack", IE_Pressed, this, &ACharacterBase::Attack);
 	PlayerInputComponent->BindAction("PickUp", IE_Pressed, this, &ACharacterBase::EquippedPressed);
 	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &ACharacterBase::Sprint);
 	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &ACharacterBase::Walk);
@@ -140,7 +140,7 @@ void ACharacterBase::StartAttack1()
 	if (Weapon)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("FIRST ATTACK"));
-		Weapon->Attack();
+		//Weapon->Attack();
 		bWasFirstAttackUsed = true;
 	}
 }
@@ -149,7 +149,7 @@ void ACharacterBase::StartAttack2()
 	if (Weapon)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("SECOND ATTACK"));
-		Weapon->Attack();
+		//Weapon->Attack();
 		bWasSecondAttackUsed = true;
 	}
 
@@ -159,7 +159,7 @@ void ACharacterBase::StartAttack3()
 	if (Weapon)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("THIRD ATTACK"));
-		Weapon->Attack();
+		//Weapon->Attack();
 		bWasThirdAttackUsed = true;
 	}
 }
@@ -168,7 +168,7 @@ void ACharacterBase::StartAttack4()
 	if (Weapon)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("FOURTH ATTACK"));
-		Weapon->Attack();
+		//Weapon->Attack();
 		bWasFourthAttackUsed = true;
 	}
 }

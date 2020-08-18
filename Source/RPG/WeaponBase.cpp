@@ -23,6 +23,9 @@ AWeaponBase::AWeaponBase()
 	CollisionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("Collision Sphere"));
 	CollisionSphere->SetupAttachment(RootComp);
 
+	CombatCollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("Combat Collision Box"));
+	CombatCollisionBox->SetupAttachment(RootComp);
+
 	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Skeletal Mesh Component"));
 	WeaponMesh->SetupAttachment(RootComp);
 
@@ -36,6 +39,9 @@ void AWeaponBase::BeginPlay()
 
 	CollisionSphere->OnComponentBeginOverlap.AddDynamic(this, &AWeaponBase::OnOverlapBegin);
 	CollisionSphere->OnComponentEndOverlap.AddDynamic(this, &AWeaponBase::OnOverlapEnd);
+
+	CombatCollisionBox->OnComponentBeginOverlap.AddDynamic(this, &AWeaponBase::CombatOverlapBegin);
+	CombatCollisionBox->OnComponentEndOverlap.AddDynamic(this, &AWeaponBase::CombatOverlapEnd);
 	
 }
 
@@ -43,9 +49,10 @@ void AWeaponBase::BeginPlay()
 void AWeaponBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	Attack();
+	//Attack();
 }
 
+/*
 void AWeaponBase::Attack()
 {
 	AController* OwnerController = GetOwningController();
@@ -72,6 +79,7 @@ void AWeaponBase::Attack()
 		DrawDebugSphere(GetWorld(), EndLocation, 10.f, 10, FColor::Red, false, -1.f, 1, 5.f);
 	}
 }
+*/
 
 void AWeaponBase::OnOverlapBegin(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
@@ -95,6 +103,21 @@ void AWeaponBase::OnOverlapEnd(UPrimitiveComponent * OverlappedComponent, AActor
 			Main->SetActiveOverlappingWeapon(nullptr);
 		}
 	}
+}
+
+void AWeaponBase::CombatOverlapBegin(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
+{
+	AController * OwningPawn = GetOwningController();
+	ACharacterBase* Main = Cast<ACharacterBase>(OtherActor);
+	if (OtherActor!=Main)
+	{
+		UGameplayStatics::ApplyDamage(OtherActor, Damage, OwningPawn, this, nullptr);
+		UE_LOG(LogTemp, Warning, TEXT("Something was hit!"));
+	}
+}
+
+void AWeaponBase::CombatOverlapEnd(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex)
+{
 }
 
 

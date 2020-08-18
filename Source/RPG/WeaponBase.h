@@ -7,6 +7,7 @@
 #include "WeaponBase.generated.h"
 
 class ACharacterBase;
+class UBoxComponent;
 class USkeletalMeshComponent;
 class USphereComponent;
 class UParticleSystem;
@@ -21,13 +22,20 @@ public:
 	AWeaponBase();
 
 	/* Handles the line tracing of our weapon */
-	void Attack();
+	//void Attack();
 	/* Triggers equip event when character overlaps with the weapon */
 	UFUNCTION()
 	virtual void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	/* Trigger events after the character is no longer overlapping with the weapon */
 	UFUNCTION()
 	virtual void OnOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	UFUNCTION()
+	void CombatOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
+
+	UFUNCTION()
+	void CombatOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
 
 	void Equip(ACharacterBase* Character);
 
@@ -54,6 +62,10 @@ protected:
 	/* Collision that will trigger the OnOverlapBegin and OnOverlapEnd */
 	UPROPERTY(EditDefaultsOnly, Category = "Collision")
 	USphereComponent* CollisionSphere;
+
+	/* Collision that will trigger damage to be applied */
+	UPROPERTY(EditDefaultsOnly, Category = "Collision")
+	UBoxComponent* CombatCollisionBox;
 
 	/* Default damage amount, adjustable */
 	UPROPERTY(EditAnywhere, Category = "Combat")

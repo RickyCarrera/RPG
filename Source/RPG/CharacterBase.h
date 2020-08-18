@@ -31,14 +31,17 @@ protected:
 	void LookUpRate(float AxisValue);
 	/* Handles the looking right and left using an analog controller */
 	void LookRightRate(float AxisValue);
+
 	/* returns the change in health as a percent */
 	UFUNCTION(BlueprintPure)
 	float GetHealthPercent() const;
 	/* returns the change in stamina as a percent */
 	UFUNCTION(BlueprintPure)
 	float GetStaminaPercent() const;
+
 	/* Will equipped the weapon we are overlapping with when mapped key is pressed */
 	void EquippedPressed();
+
 	/* Handles sprint mechanics */
 	UFUNCTION()
 	void Sprint();
@@ -75,6 +78,7 @@ protected:
 	/* Adjustable rotation rate for analog controller for the character looking vertically and horizontally */
 	UPROPERTY(EditAnywhere)
 	float RotationRate = 10;
+
 	/* Default Character Max health adjustable */
 	UPROPERTY(EditAnywhere)
 	float MaxHealth = 100;
@@ -91,9 +95,11 @@ protected:
 	/* adjustable walking speed */
 	UPROPERTY(EditDefaultsOnly, Category = "Movement")
 	float WalkSpeed = 600.f;
+
 	/* Plays the attack montage */
-	UPROPERTY(EditAnywhere)
-	UAnimMontage* AttackMontage;
+	//UPROPERTY(EditAnywhere)
+	//UAnimMontage* AttackMontage;
+
 	/* Reference to our Weapon */
 	UPROPERTY(BlueprintReadWrite)
 	AWeaponBase* Weapon;
@@ -102,6 +108,7 @@ protected:
 	AWeaponBase * ActiveOverlappingWeapon;
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AWeaponBase> WeaponClass;
+
 	/* Has the player used the first attack */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attacks")
 	bool bWasFirstAttackUsed;
